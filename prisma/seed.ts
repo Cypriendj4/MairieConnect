@@ -1,8 +1,8 @@
 import { PrismaClient } from '../prisma/client/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaNeon } from '@prisma/adapter-neon';
 
-const adapter = new PrismaLibSql({
-  url: process.env.DATABASE_URL ?? 'file:./dev.db',
+const adapter = new PrismaNeon({
+  connectionString: process.env.DATABASE_URL ?? '',
 });
 
 const prisma = new PrismaClient({ adapter });
@@ -10,7 +10,6 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('🌱 Seeding MairieConnect database...');
 
-  // Create test tenants
   const tenants = [
     {
       name: 'Mairie de Paris Centre',
@@ -85,30 +84,25 @@ async function main() {
       update: data,
       create: data,
     });
-    console.log(`  ✅ Tenant created: ${tenant.name}`);
+    console.log(`  ✅ Tenant: ${tenant.name}`);
 
-    // Create sample notices for each tenant
     const notices = [
       {
         title: 'Travaux rue de la République',
-        content: '<p>La municipalité informe ses administrés que des travaux de réfection de la chaussée auront lieu du <strong>15 au 30 septembre 2026</strong> rue de la République.</p><p>La circulation sera alternée pendant cette période. Merci de votre compréhension.</p>',
-        category: 'travaux',
-        signType: 'info',
+        content: '<p>Travaux de réfection de la chaussée du <strong>15 au 30 septembre 2026</strong>.</p><p>Circulation alternée.</p>',
+        category: 'travaux', signType: 'info',
         modifiedAt: new Date('2026-08-10'),
       },
       {
-        title: 'Collecte des déchets verts — Calendrier automne',
-        content: '<p>La collecte des déchets verts passe en horaire d\'automne à partir du 1er octobre :</p><ul><li>Mardi et vendredi de 7h à 12h</li><li>Déchetterie ouverte du lundi au samedi 9h-18h</li></ul>',
-        category: 'dechets',
-        signType: 'info',
+        title: 'Collecte des déchets verts',
+        content: '<p>Calendrier automne : mardi et vendredi 7h-12h.</p>',
+        category: 'dechets', signType: 'info',
         modifiedAt: new Date('2026-08-12'),
       },
       {
-        title: 'Alerte météo — Vigilance orange canicule',
-        content: '<p>Météo France place le département en vigilance orange canicule à partir de demain.</p><p>Recommandations :</p><ul><li>Buvez régulièrement de l\'eau</li><li>Évitez les sorties aux heures les plus chaudes (12h-16h)</li><li>Prenez des nouvelles de vos proches</li></ul><p>La mairie met à disposition une salle rafraîchie au 1er étage de la mairie.</p>',
-        category: 'securite',
-        signType: 'alert',
-        isLegal: false,
+        title: 'Alerte canicule',
+        content: '<p>Vigilance orange. Buvez de l\'eau, évitez les sorties 12h-16h.</p>',
+        category: 'securite', signType: 'alert',
         modifiedAt: new Date('2026-08-14'),
       },
     ];
@@ -116,47 +110,29 @@ async function main() {
     for (const notice of notices) {
       await prisma.officialNotice.create({
         data: {
-          tenantId: tenant.id,
-          title: notice.title,
-          content: notice.content,
+          tenantId: tenant.id, title: notice.title, content: notice.content,
           contentText: notice.content.replace(/<[^>]*>/g, ''),
-          category: notice.category,
-          signType: notice.signType,
-          isLegal: notice.isLegal,
-          modifiedAt: notice.modifiedAt,
-          publishedAt: new Date(),
-          source: 'manual',
-          isPublished: true,
+          category: notice.category, signType: notice.signType,
+          modifiedAt: notice.modifiedAt, publishedAt: new Date(),
+          source: 'manual', isPublished: true,
         },
       });
     }
-    console.log(`  📝 3 notices created for ${tenant.name}`);
+    console.log(`  📝 3 notices`);
   }
 
-  // Create admin user
   const bcrypt = await import('bcryptjs');
   const passwordHash = await bcrypt.hash('admin123', 10);
-
   await prisma.user.upsert({
     where: { email: 'admin@mairieconnect.fr' },
     update: {},
-    create: {
-      email: 'admin@mairieconnect.fr',
-      name: 'Admin MairieConnect',
-      passwordHash,
-      role: 'superadmin',
-    },
+    create: { email: 'admin@mairieconnect.fr', name: 'Admin MairieConnect', passwordHash, role: 'superadmin' },
   });
-  console.log('  👤 Admin user created: admin@mairieconnect.fr / admin123');
+  console.log('  👤 Admin: admin@mairieconnect.fr / admin123');
 
   console.log('✅ Seed complete!');
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Seed failed:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch(e => { console.error('❌', e); process.exit(1); })
+  .finally(() => prisma.$disconnect());

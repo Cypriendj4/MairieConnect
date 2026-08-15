@@ -1,8 +1,8 @@
 import { PrismaClient } from '../../prisma/client/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaNeon } from '@prisma/adapter-neon';
 
-const adapter = new PrismaLibSql({
-  url: process.env.DATABASE_URL ?? 'file:./dev.db',
+const adapter = new PrismaNeon({
+  connectionString: process.env.DATABASE_URL ?? '',
 });
 
 const globalForPrisma = globalThis as unknown as {

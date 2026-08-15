@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Tenant {
@@ -36,6 +36,8 @@ model Tenant {
 
   notices        OfficialNotice[]
   users          User[]
+
+  @@map("tenants")
 }
 
 model OfficialNotice {
@@ -68,6 +70,7 @@ model OfficialNotice {
   @@index([tenantId, isPublished])
   @@index([tenantId, category])
   @@index([contentHash])
+  @@map("official_notices")
 }
 
 model Media {
@@ -84,6 +87,7 @@ model Media {
   createdAt      DateTime @default(now())
 
   @@index([noticeId])
+  @@map("media")
 }
 
 model User {
@@ -103,6 +107,9 @@ model User {
 
   accounts       Account[]
   sessions       Session[]
+
+  @@index([tenantId])
+  @@map("users")
 }
 
 model Account {
@@ -121,6 +128,7 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
@@ -129,6 +137,7 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("sessions")
 }
 
 model VerificationToken {
@@ -136,4 +145,5 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
   @@unique([identifier, token])
+  @@map("verification_tokens")
 }
