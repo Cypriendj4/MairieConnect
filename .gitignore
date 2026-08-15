@@ -1,0 +1,13 @@
+node_modules/
+.next/
+*.db
+.env
+.env.local
+prisma/client/
+src/generated/
+
+# Prisma generated skills (tool-specific, not project code)
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
