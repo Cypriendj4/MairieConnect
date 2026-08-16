@@ -34,6 +34,7 @@ export const db = {
         if (q) items = items.filter((t) => t.name.toLowerCase().includes(q) || t.cityName.toLowerCase().includes(q) || t.postCode.includes(q));
       }
       if (orderBy?.name === 'asc') items.sort((a, b) => a.name.localeCompare(b.name));
+      if (orderBy?.createdAt === 'desc') items.sort((a, b) => (b as any).createdAt?.localeCompare?.((a as any).createdAt) || 0);
       if (take) items = items.slice(0, take);
       return Promise.resolve(items);
     },
