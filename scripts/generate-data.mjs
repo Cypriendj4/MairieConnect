@@ -60,6 +60,10 @@ async function main() {
     const dataGouv = await import('./importers/data-gouv.mjs');
     const dataGouvNotices = await dataGouv.importAll();
     importedNotices = importedNotices.concat(dataGouvNotices);
+
+    const wpMairies = await import('./importers/wordpress-mairies.mjs');
+    const wpNotices = await wpMairies.importAll();
+    importedNotices = importedNotices.concat(wpNotices);
   } else {
     console.log('⏭️  Import ignoré (--no-import)');
   }
