@@ -3,15 +3,29 @@ import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
-export default async function HomePage() {
-  const tenants = await prisma.tenant.findMany({
-    where: { isActive: true },
-    orderBy: { name: 'asc' },
-    take: 100,
-  });
+async function getData() {
+  try {
+    const [tenants, totalTenants, totalNotices] = await Promise.all([
+      prisma.tenant.findMany({
+        where: { isActive: true },
+        orderBy: { name: 'asc' },
+        take: 100,
+      }),
+      prisma.tenant.count({ where: { isActive: true } }),
+      prisma.officialNotice.count({ where: { isPublished: true } }),
+    ]);
+    return { tenants, totalTenants, totalNotices };
+  } catch {
+    return {
+      tenants: [],
+      totalTenants: 0,
+      totalNotices: 0,
+    };
+  }
+}
 
-  const totalTenants = await prisma.tenant.count({ where: { isActive: true } });
-  const totalNotices = await prisma.officialNotice.count({ where: { isPublished: true } });
+export default async function HomePage() {
+  const { tenants, totalTenants, totalNotices } = await getData();
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
