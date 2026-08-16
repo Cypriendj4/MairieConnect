@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db';
+import { db } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -9,7 +9,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, noticeId } = await params;
-  const notice = await prisma.officialNotice.findFirst({
+  const notice = await db.officialNotice.findFirst({
     where: { id: noticeId, tenant: { slug } },
   });
   if (!notice) return { title: 'Information introuvable' };
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function NoticeDetailPage({ params }: Props) {
   const { slug, noticeId } = await params;
 
-  const notice = await prisma.officialNotice.findFirst({
+  const notice = await db.officialNotice.findFirst({
     where: { id: noticeId, tenant: { slug } },
     include: { medias: { orderBy: { sortOrder: 'asc' } }, tenant: true },
   });
@@ -67,9 +67,9 @@ export default async function NoticeDetailPage({ params }: Props) {
           dangerouslySetInnerHTML={{ __html: notice.content }}
         />
 
-        {notice.medias.length > 0 && (
+        {notice.medias && notice.medias.length > 0 && (
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {notice.medias.map((media) => (
+            {notice.medias.map((media: any) => (
               <a key={media.id} href={media.url} target="_blank" rel="noopener noreferrer">
                 <img
                   src={media.url}

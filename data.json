@@ -1,0 +1,20 @@
+{
+  "tenants": [
+    { "id": "t_paris", "name": "Mairie de Paris Centre", "slug": "mairie-de-paris-centre-75001", "postCode": "75001", "cityName": "Paris", "latitude": 48.8566, "longitude": 2.3522 },
+    { "id": "t_lyon", "name": "Mairie de Lyon", "slug": "mairie-de-lyon-69001", "postCode": "69001", "cityName": "Lyon", "latitude": 45.7675, "longitude": 4.8330 },
+    { "id": "t_marseille", "name": "Mairie de Marseille", "slug": "mairie-de-marseille-13001", "postCode": "13001", "cityName": "Marseille", "latitude": 43.2965, "longitude": 5.3698 },
+    { "id": "t_bordeaux", "name": "Mairie de Bordeaux", "slug": "mairie-de-bordeaux-33000", "postCode": "33000", "cityName": "Bordeaux", "latitude": 44.8378, "longitude": -0.5792 },
+    { "id": "t_lille", "name": "Mairie de Lille", "slug": "mairie-de-lille-59000", "postCode": "59000", "cityName": "Lille", "latitude": 50.6292, "longitude": 3.0573 }
+  ],
+  "notices": [
+    { "id": "n1", "tenantId": "t_paris", "title": "Travaux rue de la République", "content": "<p>Travaux du <strong>15 au 30 septembre 2026</strong>. Circulation alternée.</p>", "category": "travaux", "signType": "info" },
+    { "id": "n2", "tenantId": "t_paris", "title": "Collecte des déchets verts", "content": "<p>Calendrier automne : mardi et vendredi 7h-12h.</p>", "category": "dechets", "signType": "info" },
+    { "id": "n3", "tenantId": "t_paris", "title": "Alerte canicule — Vigilance orange", "content": "<p>Buvez de l'eau, évitez les sorties 12h-16h. Salle rafraîchie en mairie.</p>", "category": "securite", "signType": "alert" },
+    { "id": "n4", "tenantId": "t_lyon", "title": "Réunion publique — Budget participatif", "content": "<p>Réunion le 12 septembre à 18h en mairie.</p>", "category": "evenement", "signType": "info" },
+    { "id": "n5", "tenantId": "t_lyon", "title": "Marché de Noël — Appel à candidatures", "content": "<p>Inscriptions jusqu'au 15 novembre.</p>", "category": "evenement", "signType": "info" },
+    { "id": "n6", "tenantId": "t_marseille", "title": "Fermeture piscine municipale", "content": "<p>Fermeture pour travaux du 1er au 30 septembre.</p>", "category": "travaux", "signType": "info" }
+  ],
+  "users": [
+    { "id": "u_admin", "email": "admin@mairieconnect.fr", "name": "Admin", "role": "superadmin", "passwordHash": "$2a$04$QyJZ2m3NvGk4b7W1dE9XeO5zVQrGk5j6p8s2n4l1m9w" }
+  ]
+}

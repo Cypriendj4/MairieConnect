@@ -1,18 +1,17 @@
 import Link from 'next/link';
-import { prisma } from '@/lib/db';
-
+import { db } from '@/lib/data';
 export const dynamic = 'force-dynamic';
 
 async function getData() {
   try {
     const [tenants, totalTenants, totalNotices] = await Promise.all([
-      prisma.tenant.findMany({
+      db.tenant.findMany({
         where: { isActive: true },
         orderBy: { name: 'asc' },
         take: 100,
       }),
-      prisma.tenant.count({ where: { isActive: true } }),
-      prisma.officialNotice.count({ where: { isPublished: true } }),
+      db.tenant.count({ where: { isActive: true } }),
+      db.officialNotice.count({ where: { isPublished: true } }),
     ]);
     return { tenants, totalTenants, totalNotices };
   } catch {

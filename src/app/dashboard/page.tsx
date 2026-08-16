@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/db';
+import { db } from '@/lib/data';
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -8,12 +8,12 @@ export default async function DashboardPage() {
 
   const isSuperAdmin = session.user.role === 'superadmin';
   const myTenant = session.user.tenantId
-    ? await prisma.tenant.findUnique({ where: { id: session.user.tenantId } })
+    ? await db.tenant.findUnique({ where: { id: session.user.tenantId } })
     : null;
 
-  const tenantCount = await prisma.tenant.count();
-  const noticeCount = await prisma.officialNotice.count();
-  const recentNotices = await prisma.officialNotice.findMany({
+  const tenantCount = await db.tenant.count();
+  const noticeCount = await db.officialNotice.count();
+  const recentNotices = await db.officialNotice.findMany({
     orderBy: { createdAt: 'desc' },
     take: 10,
     include: { tenant: { select: { name: true, slug: true } } },

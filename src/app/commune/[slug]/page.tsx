@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db';
+import { db } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -9,7 +9,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const tenant = await prisma.tenant.findUnique({ where: { slug } });
+  const tenant = await db.tenant.findUnique({ where: { slug } });
   if (!tenant) return { title: 'Commune introuvable' };
   return {
     title: `${tenant.name} — MairieConnect`,
@@ -19,10 +19,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CommunePage({ params }: Props) {
   const { slug } = await params;
-  const tenant = await prisma.tenant.findUnique({ where: { slug } });
+  const tenant = await db.tenant.findUnique({ where: { slug } });
   if (!tenant) notFound();
 
-  const notices = await prisma.officialNotice.findMany({
+  const notices = await db.officialNotice.findMany({
     where: { tenantId: tenant.id, isPublished: true },
     orderBy: [{ sortOrder: 'asc' }, { modifiedAt: 'desc' }],
     include: { medias: { take: 3, orderBy: { sortOrder: 'asc' } } },
@@ -91,9 +91,9 @@ export default async function CommunePage({ params }: Props) {
                   dangerouslySetInnerHTML={{ __html: notice.content }}
                 />
 
-                {notice.medias.length > 0 && (
+                {notice.medias && notice.medias.length > 0 && (
                   <div className="flex gap-2 mt-3 overflow-x-auto">
-                    {notice.medias.map((media) => (
+                    {notice.medias.map((media: any) => (
                       <img
                         key={media.id}
                         src={media.thumbnailUrl ?? media.url}

@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { prisma } from '@/lib/db';
+import { db } from '@/lib/data';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -19,13 +19,13 @@ export async function GET(request: NextRequest) {
     : { isActive: true };
 
   const [tenants, total] = await Promise.all([
-    prisma.tenant.findMany({
+    db.tenant.findMany({
       where,
       orderBy: { name: 'asc' },
       skip: (page - 1) * limit,
       take: limit,
     }),
-    prisma.tenant.count({ where }),
+    db.tenant.count({ where }),
   ]);
 
   return Response.json({
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 // POST: Create a new tenant
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const tenant = await prisma.tenant.create({
+  const tenant = await db.tenant.create({
     data: {
       name: body.name,
       slug: body.slug,
