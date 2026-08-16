@@ -26,7 +26,7 @@ const usersData = [
 // In-memory store
 export const db = {
   tenant: {
-    findMany: async ({ where, orderBy, take }: any = {}) => {
+    findMany: ({ where, orderBy, take }: any = {}) => {
       let items = [...tenantsData];
       if (where?.isActive === true) items = items.filter((t) => t.isActive);
       if (where?.OR) {
@@ -35,25 +35,25 @@ export const db = {
       }
       if (orderBy?.name === 'asc') items.sort((a, b) => a.name.localeCompare(b.name));
       if (take) items = items.slice(0, take);
-      return items;
+      return Promise.resolve(items);
     },
-    findUnique: async ({ where }: any = {}) => {
-      if (where?.slug) return tenantsData.find((t) => t.slug === where.slug) || null;
-      if (where?.id) return tenantsData.find((t) => t.id === where.id) || null;
-      return null;
+    findUnique: ({ where }: any = {}) => {
+      if (where?.slug) return Promise.resolve(tenantsData.find((t) => t.slug === where.slug) || null);
+      if (where?.id) return Promise.resolve(tenantsData.find((t) => t.id === where.id) || null);
+      return Promise.resolve(null);
     },
-    count: async ({ where }: any = {}) => {
-      if (where?.isActive === true) return tenantsData.filter((t) => t.isActive).length;
-      return tenantsData.length;
+    count: ({ where }: any = {}) => {
+      if (where?.isActive === true) return Promise.resolve(tenantsData.filter((t) => t.isActive).length);
+      return Promise.resolve(tenantsData.length);
     },
-    create: async ({ data }: any = {}) => {
+    create: ({ data }: any = {}) => {
       const item = { id: data.id || String(Date.now()), ...data, createdAt: new Date().toISOString() };
       tenantsData.push(item);
-      return item;
+      return Promise.resolve(item);
     },
   },
   officialNotice: {
-    findFirst: async ({ where, include }: any = {}) => {
+    findFirst: ({ where, include }: any = {}) => {
       let items = [...noticesData];
       if (where?.id) items = items.filter((n) => n.id === where.id);
       if (where?.tenant?.slug) {
@@ -65,28 +65,28 @@ export const db = {
         (item as any).tenant = include.tenant ? tenantsData.find((t) => t.id === item.tenantId) : undefined;
         (item as any).medias = include.medias ? [] : undefined;
       }
-      return item;
+      return Promise.resolve(item);
     },
-    findMany: async ({ where, orderBy, take, include }: any = {}) => {
+    findMany: ({ where, orderBy, take, include }: any = {}) => {
       let items = [...noticesData];
       if (where?.tenantId) items = items.filter((n) => n.tenantId === where.tenantId);
       if (where?.isPublished === true) items = items.filter((n) => n.isPublished);
       if (take) items = items.slice(0, take);
-      return items.map((n) => ({
+      return Promise.resolve(items.map((n) => ({
         ...n,
         medias: [] as any[],
         tenant: include?.tenant ? tenantsData.find((t) => t.id === n.tenantId) : undefined,
-      }));
+      })));
     },
-    count: async ({ where }: any = {}) => {
-      if (where?.isPublished === true) return noticesData.filter((n) => n.isPublished).length;
-      return noticesData.length;
+    count: ({ where }: any = {}) => {
+      if (where?.isPublished === true) return Promise.resolve(noticesData.filter((n) => n.isPublished).length);
+      return Promise.resolve(noticesData.length);
     },
   },
   user: {
-    findUnique: async ({ where }: any = {}) => {
+    findUnique: ({ where }: any = {}) => {
       const user = usersData.find((u) => u.email === where?.email || u.id === where?.id) || null;
-      return user;
+      return Promise.resolve(user);
     },
   },
 };
