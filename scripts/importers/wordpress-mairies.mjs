@@ -124,12 +124,23 @@ export async function importAll({ dryRun = false } = {}) {
           const link = item.link || '';
           const categories = extractCategories(item);
 
+          // Enrichir le contenu avec image + date
+          let richContent = '';
+          if (image) {
+            richContent += `<p><img src="${image}" alt="${title.trim()}" style="max-width:100%;border-radius:8px" /></p>`;
+          }
+          if (date) {
+            const d = new Date(date);
+            richContent += `<p><strong>📅 ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</strong></p>`;
+          }
+          richContent += content;
+
           allItems.push({
-            id: `wp_${simpleHash(title + (date || ''))}`,
-            tenantSlug: site.slug,
-            tenantId: site.tenantId,
-            title: title.trim().substring(0, 200),
-            content: content || `<p>${title.trim()}</p>`,
+                       id: `wp_${simpleHash(title + (date || ''))}`,
+                       tenantSlug: site.slug,
+                       tenantId: site.tenantId,
+                       title: title.trim().substring(0, 200),
+                       content: richContent || `<p>${title.trim()}</p>`,
             category: detectCategory(title, content),
             signType: 'event',
             isPublished: true,
