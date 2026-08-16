@@ -3,24 +3,16 @@ import { db } from '@/lib/data';
 export const dynamic = 'force-dynamic';
 
 async function getData() {
-  try {
-    const [tenants, totalTenants, totalNotices] = await Promise.all([
-      db.tenant.findMany({
-        where: { isActive: true },
-        orderBy: { name: 'asc' },
-        take: 100,
-      }),
-      db.tenant.count({ where: { isActive: true } }),
-      db.officialNotice.count({ where: { isPublished: true } }),
-    ]);
-    return { tenants, totalTenants, totalNotices };
-  } catch {
-    return {
-      tenants: [],
-      totalTenants: 0,
-      totalNotices: 0,
-    };
-  }
+  const [tenants, totalTenants, totalNotices] = await Promise.all([
+    db.tenant.findMany({
+      where: { isActive: true },
+      orderBy: { name: 'asc' },
+      take: 100,
+    }),
+    db.tenant.count({ where: { isActive: true } }),
+    db.officialNotice.count({ where: { isPublished: true } }),
+  ]);
+  return { tenants, totalTenants, totalNotices };
 }
 
 export default async function HomePage() {
