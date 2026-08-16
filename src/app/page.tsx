@@ -1,19 +1,14 @@
 import Link from 'next/link';
+import { db } from '@/lib/data';
 export const dynamic = 'force-dynamic';
 
-// Test data inlined directly in the page (bypasses data layer)
-const tenants = [
-  { id: 't_paris', name: 'Mairie de Paris Centre', slug: 'mairie-de-paris-centre-75001', postCode: '75001', cityName: 'Paris' },
-  { id: 't_lyon', name: 'Mairie de Lyon', slug: 'mairie-de-lyon-69001', postCode: '69001', cityName: 'Lyon' },
-  { id: 't_marseille', name: 'Mairie de Marseille', slug: 'mairie-de-marseille-13001', postCode: '13001', cityName: 'Marseille' },
-  { id: 't_bordeaux', name: 'Mairie de Bordeaux', slug: 'mairie-de-bordeaux-33000', postCode: '33000', cityName: 'Bordeaux' },
-  { id: 't_lille', name: 'Mairie de Lille', slug: 'mairie-de-lille-59000', postCode: '59000', cityName: 'Lille' },
-];
-
-const totalTenants = 5;
-const totalNotices = 8;
-
 export default async function HomePage() {
+  const [tenants, totalTenants, totalNotices] = await Promise.all([
+    db.tenant.findMany({ where: { isActive: true }, orderBy: { name: 'asc' }, take: 100 }),
+    db.tenant.count({ where: { isActive: true } }),
+    db.officialNotice.count({ where: { isPublished: true } }),
+  ]);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <section className="mb-12 text-center">
@@ -48,7 +43,7 @@ export default async function HomePage() {
       <section>
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">Communes disponibles</h2>
         <div id="results" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {tenants.map((tenant) => (
+          {tenants.map((tenant: any) => (
             <Link key={tenant.id} href={`/commune/${tenant.slug}`}
               className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-blue-300 transition-all">
               <div className="flex items-center gap-3">
