@@ -19,18 +19,31 @@ const LIST_ONLY = process.argv.includes('--list');
 
 // Mapping villes connues (collections → slug MairieConnect)
 const KNOWN_TOWNS = {
+  // Villes avec datasets structurés sur data.gouv.fr
   'orvault': 'mairie-d-orvault-44700',
   'nantes': 'mairie-de-nantes-44000',
+  'angers': 'mairie-d-angers-49000',
+  'brest': 'mairie-de-brest-29200',
+  'rennes': 'mairie-de-rennes-35000',
+  'tours': 'mairie-de-tours-37000',
+  'poitiers': 'mairie-de-poitiers-86000',
+  'bordeaux': 'mairie-de-bordeaux-33000',
+  'toulouse': 'mairie-de-toulouse-31000',
+  'marseille': 'mairie-de-marseille-13001',
+  'nancy': 'mairie-de-nancy-54000',
+  'clermont': 'mairie-de-clermont-ferrand-63000',
+  'clermont-ferrand': 'mairie-de-clermont-ferrand-63000',
+  'saint-étienne': 'mairie-de-saint-etienne-42000',
+  'saint-etienne': 'mairie-de-saint-etienne-42000',
+  // Grandes villes sans data.gouv (cibles scraping/RSS)
   'paris': 'mairie-de-paris-centre-75001',
   'lyon': 'mairie-de-lyon-69001',
   'marseille': 'mairie-de-marseille-13001',
-  'bordeaux': 'mairie-de-bordeaux-33000',
   'lille': 'mairie-de-lille-59000',
-  'rennes': 'mairie-de-rennes-35000',
-  'toulouse': 'mairie-de-toulouse-31000',
   'strasbourg': 'mairie-de-strasbourg-67000',
-  'besançon': 'mairie-de-besancon-25000',
-  'besancon': 'mairie-de-besancon-25000',
+  'nice': 'mairie-de-nice-06000',
+  'grenoble': 'mairie-de-grenoble-38000',
+  'montpellier': 'mairie-de-montpellier-34000',
 };
 
 function detectTown(name, org) {
@@ -96,7 +109,7 @@ async function discoverAllDatasets() {
   const allDatasets = new Map();
 
   for (const q of queries) {
-    const result = await searchDatasets(q, 20);
+    const result = await searchDatasets(q, 50);
     console.log(`  ${q}: ${result.total} datasets trouvés`);
 
     for (const ds of result.data || []) {
@@ -258,7 +271,7 @@ async function main() {
   console.log('\n📥 Import des données...');
   let allNotices = [];
 
-  for (const ds of datasets.slice(0, 3)) { // Limite à 3 datasets pour le test
+  for (const ds of datasets) {
     console.log(`\n  Traitement: ${ds.title}`);
     const notices = await importDataset(ds);
     console.log(`  → ${notices.length} notices importées`);
