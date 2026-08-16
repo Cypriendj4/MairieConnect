@@ -54,13 +54,20 @@ export default async function NoticeDetailPage({ params }: Props) {
 
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{notice.title}</h1>
 
-        {notice.modifiedAt && (
-          <p className="text-sm text-gray-400 mb-4">
-            Mis à jour le {new Date(notice.modifiedAt).toLocaleDateString('fr-FR', {
+        <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
+          {notice.modifiedAt && (
+            <span>Mis à jour le {new Date(notice.modifiedAt).toLocaleDateString('fr-FR', {
               day: 'numeric', month: 'long', year: 'numeric',
-            })}
-          </p>
-        )}
+            })}</span>
+          )}
+          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${
+            notice.source === 'panneaupocket_import'
+              ? 'bg-purple-50 text-purple-600'
+              : 'bg-gray-50 text-gray-500'
+          }`}>
+            {notice.source === 'panneaupocket_import' ? 'Importé de PanneauPocket' : 'Source : Mairie'}
+          </span>
+        </div>
 
         <div
           className="prose max-w-none text-gray-700"

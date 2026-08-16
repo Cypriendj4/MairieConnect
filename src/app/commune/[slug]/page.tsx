@@ -80,11 +80,18 @@ export default async function CommunePage({ params }: Props) {
 
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">{notice.title}</h3>
 
-                {notice.modifiedAt && (
-                  <p className="text-xs text-gray-400 mb-2">
-                    Mis à jour le {new Date(notice.modifiedAt).toLocaleDateString('fr-FR')}
-                  </p>
-                )}
+                <div className="flex items-center gap-3 text-xs text-gray-400 mb-2">
+                  {notice.modifiedAt && (
+                    <span>Mis à jour le {new Date(notice.modifiedAt).toLocaleDateString('fr-FR')}</span>
+                  )}
+                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${
+                    notice.source === 'panneaupocket_import'
+                      ? 'bg-purple-50 text-purple-600'
+                      : 'bg-gray-50 text-gray-500'
+                  }`}>
+                    {notice.source === 'panneaupocket_import' ? 'PanneauPocket' : 'Mairie'}
+                  </span>
+                </div>
 
                 <div
                   className="prose prose-sm max-w-none text-gray-600 line-clamp-4"
