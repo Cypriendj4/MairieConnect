@@ -28,8 +28,17 @@ export default async function CommunePage({ params }: Props) {
     include: { medias: { take: 3, orderBy: { sortOrder: 'asc' } } },
   });
 
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'GovernmentOrganization',
+    name: tenant.name,
+    address: { '@type': 'PostalAddress', postalCode: tenant.postCode, addressLocality: tenant.cityName, addressCountry: 'FR' },
+    url: `https://mairie-connect-ifcn.vercel.app/commune/${slug}`,
+  };
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
       {/* Header */}
       <div className="mb-8">
         <Link href="/" className="text-sm text-blue-600 hover:underline mb-2 inline-block">

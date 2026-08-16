@@ -14,8 +14,31 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'MairieConnect',
+    url: 'https://mairie-connect-ifcn.vercel.app',
+    description: "Retrouvez les arrêtés municipaux, délibérations et informations officielles de votre commune.",
+    inLanguage: 'fr-FR',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://mairie-connect-ifcn.vercel.app/?q={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <html lang="fr">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+      </head>
       <body className={inter.className}>
         <header className="border-b border-gray-200 bg-white">
           <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">

@@ -29,8 +29,21 @@ export default async function NoticeDetailPage({ params }: Props) {
 
   if (!notice) notFound();
 
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: notice.title,
+    description: (notice.contentText || notice.content).substring(0, 200),
+    datePublished: notice.publishedAt || notice.modifiedAt || undefined,
+    dateModified: notice.modifiedAt || undefined,
+    author: { '@type': 'GovernmentOrganization', name: (notice as any).tenant?.name || '' },
+    publisher: { '@type': 'Organization', name: 'MairieConnect' },
+    url: `https://mairie-connect-ifcn.vercel.app/commune/${slug}/${noticeId}`,
+  };
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <Link
         href={`/commune/${slug}`}
         className="text-sm text-blue-600 hover:underline mb-4 inline-block"
