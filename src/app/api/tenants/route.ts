@@ -29,15 +29,15 @@ export async function GET(request: NextRequest) {
   ]);
 
   return Response.json({
-    tenants: tenants.map((t) => ({
-      id: t.id,
-      name: t.name,
-      slug: t.slug,
-      postCode: t.postCode,
-      cityName: t.cityName,
-      logoUrl: t.logoUrl,
-      noticeCount: 0, // TODO: count notices
-    })),
+      tenants: tenants.map((t: any) => ({
+        id: t.id,
+        name: t.name,
+        slug: t.slug,
+        postCode: t.postCode,
+        cityName: t.cityName,
+        logoUrl: t.logoUrl,
+        noticeCount: 0,
+      })),
     total,
     page,
     limit,
