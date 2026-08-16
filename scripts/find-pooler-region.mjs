@@ -9,9 +9,10 @@ const regions = [
   'eu-west-1', 'eu-central-1', 'eu-west-2', 'eu-west-3', 'eu-north-1',
   'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2',
 ];
+const poolerVersions = ['aws-1', 'aws-0'];
 
-async function testRegion(region) {
-  const host = `aws-0-${region}.pooler.supabase.com`;
+async function testRegion(region, version) {
+  const host = `${version}-${region}.pooler.supabase.com`;
   const client = new pg.Client({
     connectionString: `postgresql://postgres.tvsijgwkkfmeztigwvsn:${encodeURIComponent(password)}@${host}:6543/postgres?sslmode=require`,
     connectionTimeoutMillis: 10000,
@@ -25,12 +26,14 @@ async function testRegion(region) {
   }
 }
 
-for (const region of regions) {
-  const ok = await testRegion(region);
-  console.log(`${ok ? '✅ FOUND' : '❌'} ${region}`);
-  if (ok) {
-    console.log(`REGION=${region}`);
-    process.exit(0);
+for (const version of poolerVersions) {
+  for (const region of regions) {
+    const ok = await testRegion(region, version);
+    console.log(`${ok ? '✅ FOUND' : '❌'} ${version}-${region}`);
+    if (ok) {
+      console.log(`POOLER=${version}-${region}`);
+      process.exit(0);
+    }
   }
 }
 process.exit(1);
