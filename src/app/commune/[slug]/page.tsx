@@ -84,13 +84,16 @@ export default async function CommunePage({ params }: Props) {
                   {notice.modifiedAt && (
                     <span>Mis à jour le {new Date(notice.modifiedAt).toLocaleDateString('fr-FR')}</span>
                   )}
-                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${
-                    notice.source === 'panneaupocket_import'
-                      ? 'bg-purple-50 text-purple-600'
-                      : 'bg-gray-50 text-gray-500'
-                  }`}>
-                    {notice.source === 'panneaupocket_import' ? 'PanneauPocket' : 'Mairie'}
-                  </span>
+                  {notice.sourceUrl && (
+                    <a href={notice.sourceUrl} target="_blank" rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium hover:underline ${
+                        notice.source === 'panneaupocket_import'
+                          ? 'bg-purple-50 text-purple-600 hover:bg-purple-100'
+                          : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                      }`}>
+                      {notice.source === 'panneaupocket_import' ? 'PanneauPocket ↗' : 'Mairie ↗'}
+                    </a>
+                  )}
                 </div>
 
                 <div

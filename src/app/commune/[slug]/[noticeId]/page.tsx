@@ -60,13 +60,16 @@ export default async function NoticeDetailPage({ params }: Props) {
               day: 'numeric', month: 'long', year: 'numeric',
             })}</span>
           )}
-          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${
-            notice.source === 'panneaupocket_import'
-              ? 'bg-purple-50 text-purple-600'
-              : 'bg-gray-50 text-gray-500'
-          }`}>
-            {notice.source === 'panneaupocket_import' ? 'Importé de PanneauPocket' : 'Source : Mairie'}
-          </span>
+          {notice.sourceUrl && (
+            <a href={notice.sourceUrl} target="_blank" rel="noopener noreferrer"
+              className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium hover:underline ${
+                notice.source === 'panneaupocket_import'
+                  ? 'bg-purple-50 text-purple-600 hover:bg-purple-100'
+                  : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+              }`}>
+              {notice.source === 'panneaupocket_import' ? 'Voir sur PanneauPocket ↗' : 'Voir la source ↗'}
+            </a>
+          )}
         </div>
 
         <div
